@@ -1,0 +1,12 @@
+#!/bin/bash
+REPO_DIR=`git rev-parse --show-toplevel`
+
+# Check that our hooks are up-to-date first
+`${REPO_DIR}/githooks/assert_correct_versions` || exit 1
+
+# ---- YOUR CODE GOES BELOW THIS LINE ----
+
+echo "The pre-commit hook is running your tests, and there's little you can do about it. Enjoy!"
+echo "--------------------------------"
+RAILS_ENV=test bundle exec rake db:reset
+RAILS_ENV=test bundle exec rake spec spec:javascript

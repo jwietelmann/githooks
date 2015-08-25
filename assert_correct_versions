@@ -1,0 +1,44 @@
+#!/bin/bash
+
+fail() {
+  # >&2 echo "FAIL!"
+  >&2 echo "Git hooks are outdated. Please run githooks/install from your project root."
+  echo false
+  exit 1
+}
+
+assert() {
+  if ! $1; then fail; fi
+  # >&2 echo "Passed assertion!"
+}
+
+assert_file_exists() {
+  assert "[ -e $1 ]"
+}
+
+REPO_DIR=`git rev-parse --show-toplevel`
+HOOKS_FILES="${REPO_DIR}/githooks/hooks/*"
+HASHES_DIR="${REPO_DIR}/githooks/.md5"
+
+for FILE_NAME in $HOOKS_FILES
+do
+  if [ -f $FILE_NAME ] # It's a regular file, not a directory or device.
+  then
+    BASE_NAME=`basename $FILE_NAME`
+    HOOK_FILE_NAME="${REPO_DIR}/.git/hooks/${BASE_NAME}"
+    HASH_FILE_NAME="${HASHES_DIR}/${BASE_NAME}.md5"
+
+    assert_file_exists $HOOK_FILE_NAME
+    assert_file_exists $HASH_FILE_NAME
+
+    PREV_MD5=`cat $HASH_FILE_NAME`
+    CURR_MD5=`cat $HOOK_FILE_NAME | md5`
+
+    # >&2 echo $PREV_MD5
+    # >&2 echo $CURR_MD5
+
+    assert "[ $PREV_MD5 = $CURR_MD5 ]"
+  fi
+done
+
+echo true
