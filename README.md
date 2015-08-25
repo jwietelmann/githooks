@@ -4,7 +4,6 @@
 * Edit `hooks/pre-commit` after the `YOUR CODE GOES BELOW THIS LINE` part.
 * Run `githooks/install`.
 * Commit your code.
-* 
 
 # It's versioned!
 
